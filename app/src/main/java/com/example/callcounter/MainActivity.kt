@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             refreshStats()
         } else {
             Toast.makeText(this, R.string.permission_required, Toast.LENGTH_LONG).show()
-            tvStatus.text = "权限未授予"
+            tvStatus.setText(R.string.permission_denied)
         }
     }
 
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         prefs.dedupMinutes = dedup
         prefs.filterShortNumber = switchFilterShort.isChecked
 
-        Toast.makeText(this, "设置已保存", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show()
         refreshStats()
     }
 
@@ -188,16 +188,16 @@ class MainActivity : AppCompatActivity() {
             progressTarget.visibility = View.VISIBLE
             tvTargetInfo.visibility = View.VISIBLE
             progressTarget.progress = progress
-            tvTargetInfo.text = "目标: ${stats.total} / $target"
+            tvTargetInfo.text = getString(R.string.target_progress, stats.total, target)
         } else {
             tvPeriodTitle.setText(if (viewMode == ViewMode.WEEK) R.string.week_total else R.string.month_total)
             progressTarget.visibility = View.GONE
             tvTargetInfo.visibility = View.GONE
         }
         tvStatus.text = when (viewMode) {
-            ViewMode.DAY -> "已更新至 ${callLogHelper.getTodayDateString()}"
-            ViewMode.WEEK -> "已更新本周统计（周一至今天）"
-            ViewMode.MONTH -> "已更新本月统计（1日至今天）"
+            ViewMode.DAY -> getString(R.string.updated_today, callLogHelper.getTodayDateString())
+            ViewMode.WEEK -> getString(R.string.updated_week)
+            ViewMode.MONTH -> getString(R.string.updated_month)
         }
 
             updatePeriodDetails(report)

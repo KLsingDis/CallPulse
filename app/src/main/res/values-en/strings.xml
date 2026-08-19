@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CallPulse</string>
+    <string name="today_total">Today\'s Calls</string>
+    <string name="day_view">Day</string>
+    <string name="week_view">Week</string>
+    <string name="month_view">Month</string>
+    <string name="view_mode">Period</string>
+    <string name="week_total">This Week\'s Calls</string>
+    <string name="month_total">This Month\'s Calls</string>
+    <string name="period_details">Details</string>
+    <string name="date">Date</string>
+    <string name="total_short">Total</string>
+    <string name="incoming">Incoming</string>
+    <string name="outgoing">Outgoing</string>
+    <string name="target_count">Target Count</string>
+    <string name="target_hint">Set today\'s target</string>
+    <string name="save">Save</string>
+    <string name="filter_short_number">Filter short numbers (&lt;7 digits)</string>
+    <string name="dedup_minutes">Deduplication window (minutes)</string>
+    <string name="refresh">Refresh Statistics</string>
+    <string name="permission_required">Call log permission is required to collect statistics</string>
+    <string name="target_reached_title">Daily Call Target Reached</string>
+    <string name="target_reached_msg">You completed %1$d calls</string>
+    <string name="channel_name">Call Statistics Reminders</string>
+    <string name="channel_desc">Reminder when the daily target is reached</string>
+    <string name="permission_denied">Permission not granted</string>
+    <string name="settings_saved">Settings saved</string>
+    <string name="target_progress">Target: %1$d / %2$d</string>
+    <string name="updated_today">Updated through %1$s</string>
+    <string name="updated_week">Updated for this week (Monday through today)</string>
+    <string name="updated_month">Updated for this month (1st through today)</string>
+    <string name="waiting_permission">Waiting for permission...</string>
+</resources>

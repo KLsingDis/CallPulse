@@ -13,6 +13,7 @@ CallPulse 是一款轻量的 Android 通话统计应用，支持日、周、月�
 - Optional short-number filtering
 - Daily call target with notification reminder
 - Light and dark theme support
+- English and Chinese UI with automatic system-language selection
 - No background service and no data upload
 
 ## Compatibility
@@ -23,6 +24,8 @@ CallPulse 是一款轻量的 Android 通话统计应用，支持日、周、月�
 - Build-verified and checked on Xiaomi dark mode; other vendor devices use standard Android APIs but require device-specific validation
 
 The app requires `READ_CALL_LOG` to read call history. Android 13 and above may also require `POST_NOTIFICATIONS` for target reminders. Vendor permission managers may require these permissions to be enabled manually.
+
+The default UI is Chinese. When the device's preferred language is English, Android automatically loads the English resources. Other languages fall back to Chinese until a dedicated translation is added.
 
 ## Build
 

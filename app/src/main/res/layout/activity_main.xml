@@ -99,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="目标: 0 / 50"
+                    android:text="@string/target_progress"
                     android:textSize="14sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -252,7 +252,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="等待权限..."
+            android:text="@string/waiting_permission"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
