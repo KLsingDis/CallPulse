@@ -25,6 +25,7 @@
     <string name="channel_desc">达到目标次数时的提醒</string>
     <string name="permission_denied">权限未授予</string>
     <string name="settings_saved">设置已保存</string>
+    <string name="settings_title">统计设置</string>
     <string name="target_progress">目标: %1$d / %2$d</string>
     <string name="updated_today">已更新至 %1$s</string>
     <string name="updated_week">已更新本周统计（周一至今天）</string>

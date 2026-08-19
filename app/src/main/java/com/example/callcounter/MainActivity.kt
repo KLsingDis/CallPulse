@@ -3,46 +3,33 @@ package com.example.callcounter
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
+import android.view.Gravity
+import android.view.View
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import android.view.View
-import android.view.Gravity
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.example.callcounter.data.model.CallDayStats
 import com.example.callcounter.data.model.PeriodStats
+import com.example.callcounter.databinding.ActivityMainBinding
+import com.example.callcounter.util.CallLogHelper
+import com.example.callcounter.util.NotificationHelper
+import com.example.callcounter.util.PrefsHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.example.callcounter.util.CallLogHelper
-import com.example.callcounter.util.NotificationHelper
-import com.example.callcounter.util.PrefsHelper
-import com.example.callcounter.data.model.CallDayStats
-import com.google.android.material.materialswitch.MaterialSwitch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var tvTotalCount: TextView
-    private lateinit var tvPeriodTitle: TextView
-    private lateinit var tvIncomingCount: TextView
-    private lateinit var tvOutgoingCount: TextView
-    private lateinit var progressTarget: ProgressBar
-    private lateinit var tvTargetInfo: TextView
-    private lateinit var etTarget: EditText
-    private lateinit var etDedup: EditText
-    private lateinit var switchFilterShort: MaterialSwitch
-    private lateinit var btnSave: Button
-    private lateinit var btnRefresh: Button
-    private lateinit var tvStatus: TextView
-    private lateinit var viewModeGroup: com.google.android.material.button.MaterialButtonToggleGroup
-    private lateinit var periodDetails: LinearLayout
-    private lateinit var periodDetailsRows: LinearLayout
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var prefs: PrefsHelper
+    private lateinit var callLogHelper: CallLogHelper
+    private lateinit var notificationHelper: NotificationHelper
 
     private var viewMode = ViewMode.DAY
     private var refreshJob: Job? = null
@@ -50,10 +37,6 @@ class MainActivity : AppCompatActivity() {
     private enum class ViewMode {
         DAY, WEEK, MONTH
     }
-
-    private lateinit var prefs: PrefsHelper
-    private lateinit var callLogHelper: CallLogHelper
-    private lateinit var notificationHelper: NotificationHelper
 
     private val permissionsLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -63,13 +46,14 @@ class MainActivity : AppCompatActivity() {
             refreshStats()
         } else {
             Toast.makeText(this, R.string.permission_required, Toast.LENGTH_LONG).show()
-            tvStatus.setText(R.string.permission_denied)
+            binding.tvStatus.setText(R.string.permission_denied)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         prefs = PrefsHelper(this)
         callLogHelper = CallLogHelper(this)
@@ -87,67 +71,69 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        tvTotalCount = findViewById(R.id.tvTotalCount)
-        tvPeriodTitle = findViewById(R.id.tvPeriodTitle)
-        tvIncomingCount = findViewById(R.id.tvIncomingCount)
-        tvOutgoingCount = findViewById(R.id.tvOutgoingCount)
-        progressTarget = findViewById(R.id.progressTarget)
-        tvTargetInfo = findViewById(R.id.tvTargetInfo)
-        etTarget = findViewById(R.id.etTarget)
-        etDedup = findViewById(R.id.etDedup)
-        switchFilterShort = findViewById(R.id.switchFilterShort)
-        btnSave = findViewById(R.id.btnSave)
-        btnRefresh = findViewById(R.id.btnRefresh)
-        tvStatus = findViewById(R.id.tvStatus)
-        viewModeGroup = findViewById(R.id.viewModeGroup)
-        periodDetails = findViewById(R.id.layoutPeriodDetails)
-        periodDetailsRows = findViewById(R.id.periodDetailsRows)
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener {
+            binding.scrollView.smoothScrollTo(0, 0)
+        }
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_settings -> {
+                    binding.scrollView.smoothScrollTo(0, binding.cardSettings.top)
+                    true
+                }
+                else -> false
+            }
+        }
 
-        viewModeGroup.check(R.id.btnDayView)
-        viewModeGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+        binding.viewModeGroup.check(binding.btnDayView.id)
+        binding.viewModeGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
             viewMode = when (checkedId) {
-                R.id.btnWeekView -> ViewMode.WEEK
-                R.id.btnMonthView -> ViewMode.MONTH
+                binding.btnWeekView.id -> ViewMode.WEEK
+                binding.btnMonthView.id -> ViewMode.MONTH
                 else -> ViewMode.DAY
             }
             refreshStats()
         }
 
-        btnSave.setOnClickListener { saveSettings() }
-        btnRefresh.setOnClickListener { refreshStats() }
+        binding.btnSave.setOnClickListener { saveSettings() }
+        binding.btnRefresh.setOnClickListener { refreshStats() }
     }
 
     private fun loadSettings() {
-        etTarget.setText(prefs.targetCount.toString())
-        etDedup.setText(prefs.dedupMinutes.toString())
-        switchFilterShort.isChecked = prefs.filterShortNumber
+        binding.etTarget.setText(prefs.targetCount.toString())
+        binding.etDedup.setText(prefs.dedupMinutes.toString())
+        binding.switchFilterShort.isChecked = prefs.filterShortNumber
     }
 
     private fun saveSettings() {
-        val target = etTarget.text.toString().toIntOrNull()
+        val target = binding.etTarget.text.toString().toIntOrNull()
             ?.takeIf { it > 0 }
             ?: PrefsHelper.DEFAULT_TARGET
-        val dedup = etDedup.text.toString().toIntOrNull()
+        val dedup = binding.etDedup.text.toString().toIntOrNull()
             ?.takeIf { it >= 0 }
             ?: PrefsHelper.DEFAULT_DEDUP_MINUTES
 
         prefs.targetCount = target
         prefs.dedupMinutes = dedup
-        prefs.filterShortNumber = switchFilterShort.isChecked
+        prefs.filterShortNumber = binding.switchFilterShort.isChecked
 
         Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show()
         refreshStats()
     }
 
     private fun checkPermissions() {
-        val callLogMissing = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED
+        val callLogMissing = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_CALL_LOG
+        ) != PackageManager.PERMISSION_GRANTED
+
         if (!callLogMissing) {
             refreshStats()
             return
         }
 
-        tvStatus.text = getString(R.string.permission_required)
+        binding.tvStatus.setText(R.string.permission_required)
         permissionsLauncher.launch(arrayOf(Manifest.permission.READ_CALL_LOG))
     }
 
@@ -160,8 +146,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshStats() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG)
-            != PackageManager.PERMISSION_GRANTED) {
-            tvStatus.text = getString(R.string.permission_required)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            binding.tvStatus.setText(R.string.permission_required)
             return
         }
 
@@ -177,28 +164,32 @@ class MainActivity : AppCompatActivity() {
             val stats = report?.summary ?: withContext(Dispatchers.IO) {
                 callLogHelper.getTodayStats()
             }
-        tvTotalCount.text = stats.total.toString()
-        tvIncomingCount.text = stats.incoming.toString()
-        tvOutgoingCount.text = stats.outgoing.toString()
 
-        val target = prefs.targetCount
-        if (viewMode == ViewMode.DAY) {
-            tvPeriodTitle.setText(R.string.today_total)
-            val progress = if (target > 0) (stats.total * 100 / target).coerceAtMost(100) else 0
-            progressTarget.visibility = View.VISIBLE
-            tvTargetInfo.visibility = View.VISIBLE
-            progressTarget.progress = progress
-            tvTargetInfo.text = getString(R.string.target_progress, stats.total, target)
-        } else {
-            tvPeriodTitle.setText(if (viewMode == ViewMode.WEEK) R.string.week_total else R.string.month_total)
-            progressTarget.visibility = View.GONE
-            tvTargetInfo.visibility = View.GONE
-        }
-        tvStatus.text = when (viewMode) {
-            ViewMode.DAY -> getString(R.string.updated_today, callLogHelper.getTodayDateString())
-            ViewMode.WEEK -> getString(R.string.updated_week)
-            ViewMode.MONTH -> getString(R.string.updated_month)
-        }
+            binding.tvTotalCount.text = stats.total.toString()
+            binding.tvIncomingCount.text = stats.incoming.toString()
+            binding.tvOutgoingCount.text = stats.outgoing.toString()
+
+            val target = prefs.targetCount
+            if (viewMode == ViewMode.DAY) {
+                binding.tvPeriodTitle.setText(R.string.today_total)
+                val progress = if (target > 0) (stats.total * 100 / target).coerceAtMost(100) else 0
+                binding.progressTarget.isVisible = true
+                binding.tvTargetInfo.isVisible = true
+                binding.progressTarget.progress = progress
+                binding.tvTargetInfo.text = getString(R.string.target_progress, stats.total, target)
+            } else {
+                binding.tvPeriodTitle.setText(
+                    if (viewMode == ViewMode.WEEK) R.string.week_total else R.string.month_total
+                )
+                binding.progressTarget.isVisible = false
+                binding.tvTargetInfo.isVisible = false
+            }
+
+            binding.tvStatus.text = when (viewMode) {
+                ViewMode.DAY -> getString(R.string.updated_today, callLogHelper.getTodayDateString())
+                ViewMode.WEEK -> getString(R.string.updated_week)
+                ViewMode.MONTH -> getString(R.string.updated_month)
+            }
 
             updatePeriodDetails(report)
 
@@ -208,29 +199,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun updatePeriodDetails(report: PeriodStats?) {
         if (viewMode == ViewMode.DAY) {
-            periodDetails.visibility = View.GONE
+            binding.layoutPeriodDetails.isVisible = false
             return
         }
 
         val dailyStats = report?.daily.orEmpty()
+        binding.periodDetailsRows.removeAllViews()
 
-        periodDetailsRows.removeAllViews()
         dailyStats.forEachIndexed { index, day ->
-            periodDetailsRows.addView(createDetailRow(day))
+            binding.periodDetailsRows.addView(createDetailRow(day))
             if (index < dailyStats.lastIndex) {
                 val divider = View(this).apply {
                     setBackgroundColor(getColor(R.color.detail_divider))
                 }
-                periodDetailsRows.addView(divider, LinearLayout.LayoutParams(-1, 1))
+                binding.periodDetailsRows.addView(
+                    divider,
+                    LinearLayout.LayoutParams(-1, 1)
+                )
             }
         }
-        periodDetails.visibility = View.VISIBLE
+        binding.layoutPeriodDetails.isVisible = true
     }
 
     private fun createDetailRow(day: CallDayStats): LinearLayout {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
-            setPadding(10, 12, 10, 12)
+            setPadding(12, 14, 12, 14)
         }
         addCell(row, day.date, Gravity.START)
         addCell(row, day.total.toString(), Gravity.CENTER)
@@ -243,6 +237,7 @@ class MainActivity : AppCompatActivity() {
         val cell = TextView(this).apply {
             text = value
             this.gravity = gravity
+            setTextAppearance(R.style.TextAppearance_CallCounter_BodyMedium)
         }
         row.addView(cell, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
     }
