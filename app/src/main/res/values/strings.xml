@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">今日通话统计</string>
+    <string name="today_total">今日总通话</string>
+    <string name="day_view">日</string>
+    <string name="week_view">周</string>
+    <string name="month_view">月</string>
+    <string name="view_mode">统计周期</string>
+    <string name="week_total">本周总通话</string>
+    <string name="month_total">本月总通话</string>
+    <string name="period_details">明细</string>
+    <string name="date">日期</string>
+    <string name="total_short">总计</string>
+    <string name="incoming">来电</string>
+    <string name="outgoing">去电</string>
+    <string name="target_count">目标次数</string>
+    <string name="target_hint">设置今日目标</string>
+    <string name="save">保存</string>
+    <string name="filter_short_number">过滤短号（&lt;7位）</string>
+    <string name="dedup_minutes">去重时间（分钟）</string>
+    <string name="refresh">刷新统计</string>
+    <string name="permission_required">需要通话记录权限才能统计</string>
+    <string name="target_reached_title">今日通话目标达成</string>
+    <string name="target_reached_msg">已完成 %1$d 次通话</string>
+    <string name="channel_name">通话统计提醒</string>
+    <string name="channel_desc">达到目标次数时的提醒</string>
+</resources>

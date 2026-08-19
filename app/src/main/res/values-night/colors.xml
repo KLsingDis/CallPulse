@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="detail_header_background">#30363D</color>
+    <color name="detail_header_text">#F5F7FA</color>
+    <color name="detail_divider">#4B5560</color>
+</resources>
