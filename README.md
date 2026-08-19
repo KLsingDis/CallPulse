@@ -1,124 +1,108 @@
-# 今日通话统计
+# CallPulse
 
-一个用于 Android 手机统计日、周、月通话量的轻量 App。
+CallPulse is a lightweight Android call statistics app for daily, weekly, and monthly call tracking.
 
-## 设计原则：按需点击，不常驻后台
+CallPulse 是一款轻量的 Android 通话统计应用，支持日、周、月汇总以及周/月按天明细。
 
-本应用采用**按需统计**设计：
-- 不常驻后台
-- 不持续监听通话状态
-- 没有状态栏常驻通知
-- 打开 App 时自动读取系统通话记录并统计
-- 点击「刷新」按钮手动更新
+## Features
 
-这样更省电、更稳定，也符合小米等国产系统对后台的严格限制。
+- Daily, weekly, and monthly call summaries
+- Daily breakdown for the current week and month
+- Incoming and outgoing call counts
+- Configurable duplicate suppression window
+- Optional short-number filtering
+- Daily call target with notification reminder
+- Light and dark theme support
+- No background service and no data upload
 
-## 功能
+## Compatibility
 
-- 读取系统通话记录，统计今日 **来电次数** 和 **去电次数**
-- 支持日、周、月视图；周/月视图提供按天的通话明细
-- 支持 **去重**：同一号码在设定时间窗口内只算 1 次
-- 支持 **过滤短号**（默认过滤长度小于 7 位的号码）
-- 可设置每日目标，打开 App 时若已达标则弹出通知提醒
-- 每日首次打开时自动清零计数
+- Android 8.0 (API 26) and above
+- Target SDK 34
+- Uses the standard Android Call Log provider
+- Build-verified and checked on Xiaomi dark mode; other vendor devices use standard Android APIs but require device-specific validation
 
-## 技术栈
+The app requires `READ_CALL_LOG` to read call history. Android 13 and above may also require `POST_NOTIFICATIONS` for target reminders. Vendor permission managers may require these permissions to be enabled manually.
 
-- 原生 Android + Kotlin
-- XML + ViewBinding
-- 只依赖必要的 AndroidX 和 Material 组件
+## Build
 
-## 环境要求
+Requirements:
 
-- JDK 17+（项目编译目标为 Java 17）
-- Android Studio Hedgehog (2023.1.1) 或更高版本
+- JDK 17+
 - Android SDK API 34
-- Gradle 8.4
+- Gradle 8.4 or Android Studio Hedgehog+
 
-## 如何运行
+Build a debug APK:
 
-### 版本号管理
+```bash
+./tools/gradle-8.4/bin/gradle :app:assembleDebug
+```
 
-应用版本号统一在根目录 `gradle.properties` 中维护：
+On Windows:
+
+```powershell
+.\tools\gradle-8.4\bin\gradle.bat :app:assembleDebug
+```
+
+The APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
+
+The local `tools/` directory is optional and is intentionally excluded from version control. Use a locally installed JDK, Android SDK, and Gradle when those tools are not present.
+
+## Version Management
+
+Application versions are managed in the root `gradle.properties` file:
 
 ```properties
 app.versionCode=2
 app.versionName=1.1.0
 ```
 
-发布新版本时递增 `app.versionCode`，并同步更新 `app.versionName`。
+Increment `app.versionCode` for every release and update `app.versionName` at the same time.
 
-Release 签名信息不写入项目文件。构建 Release 前通过环境变量提供
-`RELEASE_STORE_PASSWORD`、`RELEASE_KEY_ALIAS` 和 `RELEASE_KEY_PASSWORD`。
+## Release Signing
 
-### 方式一：使用本目录已配置好的命令行环境
+Signing credentials are never stored in the repository. Provide these environment variables when building a release:
 
-本地开发环境可放置以下工具（这些本机工具目录不提交到远端）：
-- `tools/jdk-17`
-- `tools/android-sdk`
-- `tools/gradle-8.4`
-
-直接执行：
-
-```bash
-export JAVA_HOME=$(pwd)/tools/jdk-17
-export ANDROID_SDK_ROOT=$(pwd)/tools/android-sdk
-export PATH=$JAVA_HOME/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
-./tools/gradle-8.4/bin/gradle assembleDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+```text
+RELEASE_STORE_PASSWORD
+RELEASE_KEY_ALIAS
+RELEASE_KEY_PASSWORD
 ```
 
-### 方式二：用 Android Studio 打开
+The local keystore is ignored by Git and must be backed up securely outside the repository.
 
-1. 用 Android Studio 打开本项目根目录
-2. 等待 Gradle Sync 完成
-3. 连接手机，点击 Run
+## Statistics Rules
 
-> 如果 Gradle 下载慢，已在 `settings.gradle.kts` 中配置阿里云镜像。
+- A week starts on Monday.
+- A month starts on the first day of the month.
+- Only incoming and outgoing calls are counted.
+- When enabled, numbers with fewer than seven digits are excluded.
+- Duplicate suppression uses the configured time window per call type and number.
+- Weekly and monthly details include dates with zero calls.
 
-## 权限说明
+## Project Layout
 
-首次启动会申请以下权限：
-
-| 权限 | 用途 |
-|---|---|
-| `READ_CALL_LOG` | 读取通话记录 |
-| `POST_NOTIFICATIONS` | 发送目标达成提醒（Android 13+） |
-
-## 使用说明
-
-1. 打开 App，授予通话记录权限
-2. 设置「目标次数」（默认 50）
-3. 设置「去重时间」（默认 5 分钟）
-4. 开启「过滤短号」后，长度小于 7 位的号码不计入统计
-5. 点击「保存」
-6. 每次想查看最新统计时，打开 App 或点击「刷新统计」
-7. 达到目标次数后，打开 App 会弹出通知提醒
-
-## 项目结构
-
-```
+```text
 app/src/main/java/com/example/callcounter/
-├── MainActivity.kt                 # 主界面
+├── MainActivity.kt
 ├── data/model/
-│   ├── CallDayStats.kt             # 按天明细统计
-│   ├── CallLogItem.kt              # 通话记录项
-│   ├── CallStats.kt                # 统计数据
-│   └── PeriodStats.kt              # 周/月汇总与明细
+│   ├── CallDayStats.kt
+│   ├── CallLogItem.kt
+│   ├── CallStats.kt
+│   └── PeriodStats.kt
 └── util/
-    ├── CallLogHelper.kt            # 读取、过滤、去重通话记录
-    ├── NotificationHelper.kt       # 目标达成通知
-    └── PrefsHelper.kt              # 配置存储
+    ├── CallLogHelper.kt
+    ├── NotificationHelper.kt
+    └── PrefsHelper.kt
 ```
 
-## 注意事项
+## Privacy
 
-- 本应用仅读取本地通话记录，不上传任何数据
-- 通话统计基于系统 Call Log，若通话记录被手动删除，统计会相应减少
-- 由于不常驻后台，只有在打开 App 时才会检查目标是否达成并提醒
+CallPulse reads call history locally and does not upload call records or personal data.
 
-## 后续可扩展
+## Roadmap
 
-- 桌面 Widget 显示今日数量
-- 导出 Excel / CSV
-- 自定义黑名单
+- Home screen widget
+- CSV/Excel export
+- Custom blacklist
+- Automated unit tests for date boundaries and deduplication rules

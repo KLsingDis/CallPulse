@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">今日通话统计</string>
+    <string name="app_name">CallPulse</string>
     <string name="today_total">今日总通话</string>
     <string name="day_view">日</string>
     <string name="week_view">周</string>
