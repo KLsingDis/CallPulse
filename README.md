@@ -74,6 +74,26 @@ RELEASE_KEY_PASSWORD
 
 The local keystore is ignored by Git and must be backed up securely outside the repository.
 
+## Publishing an APK
+
+Every release should publish a signed APK as a Gitee Release asset. Do not commit APK files to the source repository.
+
+1. Update `app.versionCode` and `app.versionName` in the root `gradle.properties`.
+2. Build the signed release APK:
+
+```powershell
+$env:RELEASE_STORE_PASSWORD = "your-keystore-password"
+$env:RELEASE_KEY_ALIAS = "your-key-alias"
+$env:RELEASE_KEY_PASSWORD = "your-key-password"
+.\tools\gradle-8.4\bin\gradle.bat :app:assembleRelease
+```
+
+3. Verify the APK at `app/build/outputs/apk/release/app-release.apk` and confirm that its version matches `gradle.properties`.
+4. Commit and push the source changes to `master`.
+5. Create a Gitee Release for the same version and attach the APK. Use a stable filename such as `CallPulse-v1.1.0-release.apk`.
+
+The Gitee repository is [klsing/call-pulse](https://gitee.com/klsing/call-pulse). Release assets are uploaded through the Gitee web interface or an authenticated Gitee API/CLI; credentials must never be placed in scripts or committed files.
+
 ## Statistics Rules
 
 - A week starts on Monday.
