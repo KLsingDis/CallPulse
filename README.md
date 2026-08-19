@@ -94,6 +94,18 @@ $env:RELEASE_KEY_PASSWORD = "your-key-password"
 
 The Gitee repository is [klsing/call-pulse](https://gitee.com/klsing/call-pulse). Release assets are uploaded through the Gitee web interface or an authenticated Gitee API/CLI; credentials must never be placed in scripts or committed files.
 
+For a repeatable release, use the repository script. It updates the version, builds the signed APK, commits and tags the source, pushes both to Gitee, creates the Gitee Release, and uploads the APK:
+
+```powershell
+$env:GITEE_TOKEN = "your-gitee-access-token"
+$env:RELEASE_STORE_PASSWORD = "your-keystore-password"
+$env:RELEASE_KEY_ALIAS = "your-key-alias"
+$env:RELEASE_KEY_PASSWORD = "your-key-password"
+.\scripts\release.ps1 -VersionName 1.2.0 -VersionCode 3 -ReleaseNotes "Add English localization"
+```
+
+Use `-SkipGitee -SkipPush` for a local release-build test. The script refuses to run with uncommitted changes or an existing version tag.
+
 ## Statistics Rules
 
 - A week starts on Monday.

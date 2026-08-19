@@ -25,6 +25,7 @@
 - 版本号只在根目录 `gradle.properties` 的 `app.versionCode` 和 `app.versionName` 中维护。
 - Release 签名密码只通过环境变量提供，不得写入 Gradle 文件或提交到远端。
 - 新版本安装包作为 Gitee Release asset 上传，不提交 APK 到源码仓库；发布前必须同步递增版本号并构建签名 Release APK。
+- 自动发版入口：`scripts/release.ps1`；要求显式传入 `-VersionName` 和 `-VersionCode`，并使用 `GITEE_TOKEN` 与 Release 签名环境变量。
 - 统计必须沿用短号过滤和去重配置；周从周一开始，月从当月 1 日开始。
 
 ## 当前状态与下一步
