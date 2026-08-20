@@ -13,6 +13,7 @@ class PrefsHelper(context: Context) {
         private const val KEY_FILTER_SHORT = "filter_short"
         private const val KEY_REMINDED_TODAY = "reminded_today"
         private const val KEY_LAST_DATE = "last_date"
+        private const val KEY_ONBOARDING_SEEN = "onboarding_seen"
 
         const val DEFAULT_TARGET = 50
         const val DEFAULT_DEDUP_MINUTES = 5
@@ -37,6 +38,10 @@ class PrefsHelper(context: Context) {
     var lastDate: String
         get() = prefs.getString(KEY_LAST_DATE, "") ?: ""
         set(value) = prefs.edit().putString(KEY_LAST_DATE, value).apply()
+
+    var onboardingSeen: Boolean
+        get() = prefs.getBoolean(KEY_ONBOARDING_SEEN, false)
+        set(value) = prefs.edit().putBoolean(KEY_ONBOARDING_SEEN, value).apply()
 
     fun resetDaily(date: String) {
         prefs.edit()

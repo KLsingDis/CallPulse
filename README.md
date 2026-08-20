@@ -14,6 +14,7 @@ CallPulse 是一款轻量的 Android 通话统计应用，支持日、周、月�
 - Daily call target with notification reminder
 - Light and dark theme support
 - English and Chinese UI with automatic system-language selection
+- First-launch onboarding guide, available again from the toolbar menu
 - No background service and no data upload
 
 ## Compatibility
@@ -90,7 +91,7 @@ $env:RELEASE_KEY_PASSWORD = "your-key-password"
 
 3. Verify the APK at `app/build/outputs/apk/release/app-release.apk` and confirm that its version matches `gradle.properties`.
 4. Commit and push the source changes to `master`.
-5. Create a Gitee Release for the same version and attach the APK. Use a stable filename such as `CallPulse-v1.1.0-release.apk`.
+5. Create a Gitee Release for the same version and attach the APK. Use a stable filename such as `今日通话统计-v1.1.0-release.apk`.
 
 The Gitee repository is [klsing/call-pulse](https://gitee.com/klsing/call-pulse). Release assets are uploaded through the Gitee web interface or an authenticated Gitee API/CLI; credentials must never be placed in scripts or committed files.
 
@@ -114,6 +115,7 @@ Use `-SkipGitee -SkipPush` for a local release-build test. The script refuses to
 - When enabled, numbers with fewer than seven digits are excluded.
 - Duplicate suppression uses the configured time window per call type and number.
 - Weekly and monthly details include dates with zero calls.
+- The default Chinese app name is `今日通话统计`; English system locales display `CallPulse`.
 
 ## Project Layout
 

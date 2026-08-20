@@ -80,7 +80,7 @@ if ($LASTEXITCODE -ne 0) { throw "Release build failed." }
 
 $apk = Join-Path $repoRoot "app/build/outputs/apk/release/app-release.apk"
 if (-not (Test-Path $apk)) { throw "Release APK not found: $apk" }
-$publishedName = "CallPulse-$tag-release.apk"
+$publishedName = "今日通话统计-$tag-release.apk"
 $sha256 = (Get-FileHash -LiteralPath $apk -Algorithm SHA256).Hash.ToLowerInvariant()
 $notes = if ([string]::IsNullOrWhiteSpace($ReleaseNotes)) { "CallPulse $VersionName`n`nSHA-256: $sha256" } else { "$ReleaseNotes`n`nSHA-256: $sha256" }
 

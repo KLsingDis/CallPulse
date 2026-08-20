@@ -31,4 +31,10 @@
     <string name="updated_week">Updated for this week (Monday through today)</string>
     <string name="updated_month">Updated for this month (1st through today)</string>
     <string name="waiting_permission">Waiting for permission...</string>
+    <string name="user_guide">User Guide</string>
+    <string name="onboarding_title">Welcome to CallPulse</string>
+    <string name="onboarding_message">1. Grant call log permission so the app can read statistics.\n\n2. Use Day view to see today\'s calls and set a daily target.\n\n3. Use Week and Month views for period summaries and daily details.\n\n4. The deduplication window prevents repeated records for the same number within a short period.\n\n5. When enabled, short numbers with fewer than 7 digits are excluded.\n\nAll data is read and processed locally and is never uploaded.</string>
+    <string name="onboarding_start">Get Started</string>
+    <string name="onboarding_later">Later</string>
+    <string name="close">Close</string>
 </resources>

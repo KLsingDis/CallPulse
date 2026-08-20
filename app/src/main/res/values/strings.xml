@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CallPulse</string>
+    <string name="app_name">今日通话统计</string>
     <string name="today_total">今日总通话</string>
     <string name="day_view">日</string>
     <string name="week_view">周</string>
@@ -31,4 +31,10 @@
     <string name="updated_week">已更新本周统计（周一至今天）</string>
     <string name="updated_month">已更新本月统计（1日至今天）</string>
     <string name="waiting_permission">等待权限...</string>
+    <string name="user_guide">使用指南</string>
+    <string name="onboarding_title">欢迎使用今日通话统计</string>
+    <string name="onboarding_message">1. 授予通话记录权限，应用才能读取统计数据。\n\n2. 日视图查看今天的总通话，并设置每日目标。\n\n3. 周视图和月视图查看周期汇总及按天明细。\n\n4. 去重时间用于避免短时间内同一号码的重复记录。\n\n5. 开启过滤短号后，少于 7 位的号码不会计入统计。\n\n所有数据只在本机读取和处理，不会上传。</string>
+    <string name="onboarding_start">开始使用</string>
+    <string name="onboarding_later">稍后设置</string>
+    <string name="close">关闭</string>
 </resources>

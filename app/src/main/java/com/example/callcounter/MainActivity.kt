@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.example.callcounter.data.model.CallDayStats
 import com.example.callcounter.data.model.PeriodStats
 import com.example.callcounter.databinding.ActivityMainBinding
@@ -62,7 +63,11 @@ class MainActivity : AppCompatActivity() {
         initViews()
         loadSettings()
         checkDateReset()
-        checkPermissions()
+        if (prefs.onboardingSeen) {
+            checkPermissions()
+        } else {
+            binding.root.post { showOnboarding(true) }
+        }
     }
 
     override fun onResume() {
@@ -79,6 +84,10 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_settings -> {
                     binding.scrollView.smoothScrollTo(0, binding.cardSettings.top)
+                    true
+                }
+                R.id.action_guide -> {
+                    showOnboarding(false)
                     true
                 }
                 else -> false
@@ -135,6 +144,23 @@ class MainActivity : AppCompatActivity() {
 
         binding.tvStatus.setText(R.string.permission_required)
         permissionsLauncher.launch(arrayOf(Manifest.permission.READ_CALL_LOG))
+    }
+
+    private fun showOnboarding(firstLaunch: Boolean) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.onboarding_title)
+            .setMessage(R.string.onboarding_message)
+            .setPositiveButton(R.string.onboarding_start) { _, _ ->
+                if (firstLaunch) prefs.onboardingSeen = true
+                checkPermissions()
+            }
+            .setNegativeButton(if (firstLaunch) R.string.onboarding_later else R.string.close) { _, _ ->
+                if (firstLaunch) {
+                    prefs.onboardingSeen = true
+                    checkPermissions()
+                }
+            }
+            .show()
     }
 
     private fun checkDateReset() {
